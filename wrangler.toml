@@ -1,0 +1,20 @@
+name = "agent-07-workflow"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[ai]
+binding = "AI"   # Workers AI free tier, no API keys
+
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1007"
+simple = { limit = 5, period = 60 }
+
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_YOUR_KV_ID"   # npx wrangler kv namespace create KV
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = true

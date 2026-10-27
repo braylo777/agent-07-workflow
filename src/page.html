@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Agent Workflow</title>
+<style>body{font-family:system-ui;max-width:760px;margin:32px auto;padding:0 16px;background:#0b1730;color:#eef}a{color:#9cf}textarea,input,select,button{font-size:15px;padding:8px;border-radius:6px;border:1px solid #345;background:#13234a;color:#eef}textarea{width:100%;box-sizing:border-box}button{cursor:pointer;background:#2b5bd7}pre{background:#13234a;padding:12px;white-space:pre-wrap;border-radius:6px;max-height:480px;overflow:auto}.row{display:flex;gap:8px;margin:8px 0}</style></head>
+<body><h1>Agent Workflow</h1><p>A durable multi-step AI pipeline: classify, find pain points, score, then draft an email. Every step is checkpointed to KV, failures retry with backoff, and runs can be resumed.</p>
+<div class=row><select id=ep><option value="0">POST /api/runs — start a run</option><option value="1">POST /api/runs — start with an injected failure (watch the retry)</option><option value="2">GET /api/steps — list steps</option></select><button id=go>Send</button></div>
+<textarea id=bd rows=5></textarea><p style="opacity:.7;font-size:13px">Edit the JSON body and press Send. Rate limited to keep this demo on the free tier. Source on <a href="https://github.com/braylo777/agent-07-workflow">GitHub</a>.</p>
+<h3>Response</h3><pre id=out></pre>
+<script>
+const S=localStorage.sid||(localStorage.sid=Math.random().toString(36).slice(2,10));
+const E=[{"label": "start a run", "method": "POST", "path": "/api/runs", "body": {"lead": "Rodriguez Roofing, 6 trucks, Dallas TX. Owner says they miss calls during jobs and quotes take days."}}, {"label": "start with an injected failure (watch the retry)", "method": "POST", "path": "/api/runs", "body": {"lead": "Bright Smile Dental, 2 locations in Phoenix, front desk overwhelmed.", "fail_step": "score"}}, {"label": "list steps", "method": "GET", "path": "/api/steps"}];
+const fill=()=>{const x=E[ep.value];bd.value=x.body?JSON.stringify(x.body,null,2).replaceAll("{{session}}",S):"";bd.disabled=x.method==="GET"};
+ep.onchange=fill;fill();
+go.onclick=async()=>{const x=E[ep.value];out.textContent="working…";const t0=Date.now();
+try{const r=await fetch(x.path.replaceAll("{{session}}",S),x.method==="GET"?{}:{method:"POST",headers:{"content-type":"application/json"},body:bd.value});
+out.textContent=`HTTP ${r.status} · ${Date.now()-t0} ms\n\n`+JSON.stringify(await r.json(),null,2)}catch(e){out.textContent=String(e)}};
+</script></body></html>
