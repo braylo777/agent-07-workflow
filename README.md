@@ -1,37 +1,53 @@
 # agent-07-workflow
 
-A **durable agent workflow**: a multi-step LLM pipeline with checkpointing, retries with exponential backoff, and resumable runs. It runs serverless on Cloudflare Workers with the free Workers AI tier and KV. Project 7 of a 10-part agentic AI portfolio.
+**Agent Workflow: durable, checkpointed AI pipeline**
 
 **Live demo:** https://agent-07-workflow.braylo777.workers.dev
 
+![Demo screenshot](docs/screenshot.png)
+
 ## What it is
-Submit a sales lead. The workflow runs four steps (`classify` → `pain_points` → `score` → `draft_email`), saving each result as it completes. Look up any run at `GET /api/runs/:id` and resume a failed one with `POST /api/runs/:id/resume`. Pass `fail_step` to inject a failure and watch the retry in the run log.
+A multi-step AI workflow engine (project 7 of a 10-part agentic AI portfolio). A sales lead goes through four LLM steps (classify, find pain points, score, draft an email). Every step is checkpointed to KV, failed steps retry with exponential backoff, and a run can be resumed from its last completed step.
+
+## Architecture
+```mermaid
+flowchart LR
+  U[POST /api/runs] --> RL{rate limit}
+  RL --> C[classify]
+  C --> P[pain_points] --> S[score] --> E[draft_email] --> Done[(status: complete)]
+  C & P & S & E -. checkpoint .-> KV[(Workers KV)]
+  S -- error --> B[retry w/ backoff<br/>max 3 attempts] --> S
+  Resume[POST /api/runs/:id/resume] --> KV
+```
 
 ## How it works
-```
-POST /api/runs ─▶ run{id, input, out:{}, log:[]}
-   for step in [classify, pain_points, score, draft_email]:
-       skip if checkpointed
-       try step (LLM, structured JSON) ─ fail ─▶ retry ×3 (250ms, 500ms…)
-       checkpoint run ─▶ KV
-   status: complete | failed (resumable)
-```
-- `src/workflow.js`: the step definitions and a small workflow engine (checkpoint, retry, resume, per-attempt log with timings).
-- Each step only sees the outputs it needs from earlier steps, and parses structured JSON with safe fallbacks.
-- Runs expire after 3 days. Guardrails: 5 requests/min per IP, 500-char cap.
-- For long-running production jobs, the same step model maps directly onto Cloudflare Workflows (`step.do`).
+- `src/workflow.js`: step definitions, retry loop (`MAX_ATTEMPTS = 3`, backoff 250ms × 2ⁿ), KV checkpoint after every step, resume skips completed steps.
+- `src/index.js`: REST API (`/api/runs`, `/api/runs/:id`, `/api/runs/:id/resume`, `/api/steps`), input validation, per-IP rate limit.
+- `fail_step` lets you inject a first-attempt failure into any step to watch recovery live.
+- Runs serverless on Cloudflare Workers with the free Workers AI tier (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`); 5 requests/min per IP keeps the demo free.
+
+## Eval results
+Measured against the **live** deployment with real model calls (`node evals/run.mjs`), run 2026-10-28. Raw per-case output: [`evals/results.json`](evals/results.json). Small sample sizes, kept small to stay inside the free daily model quota, so read these as indicative, not definitive.
+
+| Metric | Result |
+|---|---|
+| Step completion (schema-valid step outputs) | 64/64 (100%) |
+| Run completion | 16/16 (100%) |
+| Recovery rate (injected failures that retried and completed) | 8/8 (100%) |
+| Natural (non-injected) step failures | 0 failed, 0 recovered |
+| Latency p50 / p95 (end-to-end HTTP) | 5237 ms / 8768 ms (n=16) |
+
+## Tests
+10/10 unit tests pass (`npm test`, Node 20+, the LLM is mocked so they run offline).
 
 ## Run it
 ```bash
 npm install
-npm test            # offline unit tests (Node 20+), LLM is mocked
-npx wrangler dev    # local; Workers AI runs via your Cloudflare login
-npx wrangler deploy # free tier, no paid API keys
+npm test               # offline unit tests
+node evals/run.mjs     # live evals (BASE=http://localhost:8787 for local)
+npx wrangler dev       # local; Workers AI via your Cloudflare login
+npx wrangler deploy    # free tier, no paid API keys
 ```
-`wrangler.toml` needs your KV namespace id first: `npx wrangler kv namespace create KV`.
-
-## Stack
-Cloudflare Workers · Workers AI (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`, Workers KV) · vanilla JS · node:test
 
 ## License
 MIT

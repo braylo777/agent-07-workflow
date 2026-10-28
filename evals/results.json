@@ -1,0 +1,261 @@
+{
+  "project": "agent-07-workflow",
+  "endpoint": "https://agent-07-workflow.braylo777.workers.dev",
+  "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  "run_at": "2026-10-28T00:23:39.117Z",
+  "latency_ms": {
+    "n": 16,
+    "p50": 5237,
+    "p95": 8768,
+    "note": "client-side wall clock per HTTP request, box to Cloudflare edge"
+  },
+  "metrics": {
+    "step_completion": {
+      "passed": 64,
+      "total": 64,
+      "rate": 1,
+      "definition": "steps whose output passed a schema check (industry set, >=1 pain point, score 0-100, email >20 chars)"
+    },
+    "run_completion": {
+      "passed": 16,
+      "total": 16,
+      "rate": 1
+    },
+    "recovery_rate": {
+      "passed": 8,
+      "total": 8,
+      "rate": 1,
+      "definition": "runs with an injected first-attempt failure that retried and completed"
+    },
+    "natural_step_failures": {
+      "failed": 0,
+      "recovered": 0
+    }
+  },
+  "cases": [
+    {
+      "lead": "Rodriguez Roofing, 6 trucks, Dallas TX. Owner misses calls during jobs and quotes take days.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 8768
+    },
+    {
+      "lead": "Bright Smile Dental, 2 locations in Phoenix, front desk overwhelmed with reschedules.",
+      "fail_step": "classify",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 6715
+    },
+    {
+      "lead": "Ace Plumbing, solo plumber in Austin, does invoicing by hand at night.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 6305
+    },
+    {
+      "lead": "GreenLeaf Landscaping, 15 crew members, Atlanta, scheduling via group texts.",
+      "fail_step": "pain_points",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 5237
+    },
+    {
+      "lead": "Peak HVAC, 40 techs across Denver, after-hours calls go to voicemail.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 4316
+    },
+    {
+      "lead": "Lotus Day Spa, Miami, no-shows are 20% of bookings.",
+      "fail_step": "score",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 5382
+    },
+    {
+      "lead": "Main Street Bakery, Portland, owner answers every catering inquiry by email.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 4693
+    },
+    {
+      "lead": "Summit Law Group, 8 attorneys in Chicago, intake forms are paper.",
+      "fail_step": "draft_email",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 4498
+    },
+    {
+      "lead": "QuickFix Auto Repair, 3 bays, Houston, customers call constantly for status updates.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 5098
+    },
+    {
+      "lead": "Coastal Realty, 25 agents in San Diego, leads go cold before follow-up.",
+      "fail_step": "classify",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 4953
+    },
+    {
+      "lead": "Iron Gym, 1 location in Tampa, member cancellations are handled manually.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 5347
+    },
+    {
+      "lead": "Paws & Claws Vet Clinic, Seattle, phone lines jammed every morning.",
+      "fail_step": "pain_points",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 5795
+    },
+    {
+      "lead": "Sparkle Cleaning Co, 12 cleaners, Nashville, quotes are done on paper.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 5852
+    },
+    {
+      "lead": "BrightPath Tutoring, online, parents email to book and pay.",
+      "fail_step": "score",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 5276
+    },
+    {
+      "lead": "Elite Electric, 5 electricians in Charlotte, permits and job notes in spreadsheets.",
+      "fail_step": null,
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 4,
+      "ms": 5132
+    },
+    {
+      "lead": "Sunrise Senior Care, 60 caregivers in Orlando, shift scheduling by phone.",
+      "fail_step": "draft_email",
+      "http": 200,
+      "status": "complete",
+      "valid_steps": {
+        "classify": true,
+        "pain_points": true,
+        "score": true,
+        "draft_email": true
+      },
+      "attempts": 5,
+      "ms": 4838
+    }
+  ]
+}
