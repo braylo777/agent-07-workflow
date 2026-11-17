@@ -1,4 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent Workflow · Braylo</title>
+//! Demo page (generated from the old src/page.html; kept as a Rust string).
+pub const PAGE: &str = r####"<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent Workflow · Braylo</title>
 <style>:root{--navy:#0d1520;--panel:#141f2e;--line:#26344a;--cream:#efe9dc;--brass:#b39b70}
 *{box-sizing:border-box}body{margin:0;background:var(--navy);color:var(--cream);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:820px;margin:0 auto;padding:40px 20px 56px}
@@ -35,4 +36,4 @@ go.onclick=async()=>{const x=E[ep.value];out.textContent="working…";st.textCon
 try{const r=await fetch(x.path,x.method==="GET"?{}:{method:"POST",headers:{"content-type":"application/json"},body:bd.value});
 const j=await r.json();st.textContent=`HTTP ${r.status} · ${Date.now()-t0} ms`;out.textContent=JSON.stringify(j,null,2);
 if(j&&j.id&&/^[a-z0-9]{8}$/.test(j.id))E.forEach(e=>{if(e.body&&e.body.id==="PASTE_ID")e.body.id=j.id});}catch(e){out.textContent=String(e);st.textContent="error"}};
-</script></body></html>
+</script></body></html>"####;
